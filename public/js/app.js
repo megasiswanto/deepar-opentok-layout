@@ -33,9 +33,9 @@ var layout = initLayoutContainer(layoutContainer, options);
 layout.layout();
 
 // replace these values with those generated in your TokBox Account
-var apiKey;// = '47449181';
-var sessionId;// = '1_MX40NzQ0OTE4MX5-MTY0NDk3NjE1NzIwN35oTVQvbEZwWGgvOC9IeVZPaEtBa3VvRkR-fg';
-var token;// = 'T1==cGFydG5lcl9pZD00NzQ0OTE4MSZzaWc9MzRkZWY3NGJmYzY5N2UzODQ4YTk3YzkyMGJkZDZjMzc2OWM4YzNmNzpzZXNzaW9uX2lkPTFfTVg0ME56UTBPVEU0TVg1LU1UWTBORGszTmpFMU56SXdOMzVvVFZRdmJFWndXR2d2T0M5SWVWWlBhRXRCYTNWdlJrUi1mZyZjcmVhdGVfdGltZT0xNjQ0OTkxODg2Jm5vbmNlPTAuMTA4NDIyNDE2ODQ4MjI3NzMmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTY0NTU5NjY4NiZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==';
+var apiKey;
+var sessionId;
+var token;
 
 // create canvas on which DeepAR will render
 var deepARCanvas = document.createElement('canvas');
