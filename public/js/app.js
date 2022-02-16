@@ -154,7 +154,7 @@ function startDeepAR(canvas) {
   deepAR.downloadFaceTrackingModel('./deepar/models-68-extreme.bin');
 
   var filterIndex = 0;
-  var filters = ['./effects/lion','./effects/flowers','./effects/dalmatian','./effects/background_segmentation','./effects/background_blur','./effects/aviators','./effects/fairy_lights','./effects/beauty','./effects/topology'];
+  var filters = ['./effects/aviators','./effects/dalmatian','./effects/background_segmentation','./effects/background_blur','./effects/beauty'];
   var changeFilterButton = document.getElementById('change-filter-button');
   changeFilterButton.onclick = function() {
     filterIndex = (filterIndex + 1) % filters.length;
