@@ -1,0 +1,21 @@
+{
+  "name": "vonage-web-js-master",
+  "version": "1.0.0",
+  "description": "This sample application demonstrates how to use the DeepAR SDK to add face filters and masks to your video call using the [Vonage Video(formerly OpenTok) Web SDK](https://tokbox.com/developer/sdks/js/), along with automating layout of video elements using [opentok-layout-js library](https://github.com/aullman/opentok-layout-js).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "mega.siswanto@vonage.com",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "morgan": "^1.10.0",
+    "opentok": "^2.13.0",
+    "path": "^0.12.7"
+  }
+}
