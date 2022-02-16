@@ -47,12 +47,6 @@ var mediaStream = deepARCanvas.captureStream(25);
 var videoTracks = mediaStream.getVideoTracks();
 var deepAR;
 
-// // start DeepAR
-// startDeepAR(deepARCanvas);
-//
-// // start video call
-// initializeSession(videoTracks[0]);
-
 axios.post("/init", {})
 .then(result => {
   console.log("/init | ", result);
