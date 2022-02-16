@@ -130,7 +130,7 @@ function startDeepAR(canvas) {
   deepAR = DeepAR({
     canvasWidth: 640,
     canvasHeight: 480,
-    licenseKey: 'ab5861f7f28e8eb0ec8e512ce9b4a0f1c401328c83f78015ceef510c95802ec3e41e9cf4b94ce3f7',
+    licenseKey: '14a7e1e989291223d722387e33d497a89d5076a85d94bd87473c9efa52bf8fbbfd2b61d0df7b62d5',
     libPath: './../deepar',
     segmentationInfoZip: 'segmentation.zip',
     canvas: canvas,
