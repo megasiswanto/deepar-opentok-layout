@@ -45,3 +45,4 @@ Thumbs.db
 
 # Others
 package-lock.json
+.env
