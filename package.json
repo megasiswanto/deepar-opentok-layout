@@ -1,7 +1,7 @@
 {
-  "name": "vonage-web-js-master",
+  "name": "deepar-opentok-layout",
   "version": "1.0.0",
-  "description": "This sample application demonstrates how to use the DeepAR SDK to add face filters and masks to your video call using the [Vonage Video(formerly OpenTok) Web SDK](https://tokbox.com/developer/sdks/js/), along with automating layout of video elements using [opentok-layout-js library](https://github.com/aullman/opentok-layout-js).",
+  "description": "This app launches a simple multi-party video conference, where each participants can switch between various filters offered by DeepAR.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
