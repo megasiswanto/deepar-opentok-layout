@@ -33,9 +33,7 @@ var layout = initLayoutContainer(layoutContainer, options);
 layout.layout();
 
 // replace these values with those generated in your TokBox Account
-var apiKey;
-var sessionId;
-var token;
+var apiKey, sessionId, token, deepArLicenseKey;
 
 // create canvas on which DeepAR will render
 var deepARCanvas = document.createElement('canvas');
@@ -54,6 +52,7 @@ axios.post("/init", {})
     apiKey = result.data ? result.data.apiKey : "";
     sessionId = result.data ? result.data.sessionId : "";
     token = result.data ? result.data.token : "";
+    deepArLicenseKey = result.data ? result.data.deepArLicenseKey : "";
 
     // start DeepAR
     startDeepAR(deepARCanvas);

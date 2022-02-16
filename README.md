@@ -7,7 +7,8 @@ This app launches a simple multi-party video conference, where each participants
 
 ## 🛠 Setup
 1. Create a [Tokbox account](https://tokbox.com/account/) and create a new project with the type "Vonage Video API".
-2. Make sure `.env` file exists on root folder (format is inside `.env.example`). Content of the file should filled in accordingly.
+2. Create a [DeepAR account](https://developer.deepar.ai/login) and create a new project.
+3. Make sure `.env` file exists on root folder (format is inside `.env.example`). Content of the file should filled in accordingly.
 
 ## ▶️ Run Project
 - Execute: `npm i`
