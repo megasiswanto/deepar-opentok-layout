@@ -1,13 +1,3 @@
 {
-  "rooms": [
-    {
-      "sessionId": "1_MX40NzQ0OTE4MX5-MTY0NTAwNTg5Njk4NX5nTUxoYitqVGdrZDdYUTJpdnlWcng5NDF-UH4"
-    },
-    {
-      "sessionId": "1_MX40NzQ0OTE4MX5-MTY0NTAwNTkwMjA2NH5HSXlYSUZKaW5VVWp0UCtLQXZNYk9mdE1-UH4"
-    },
-    {
-      "sessionId": "1_MX40NzQ0OTE4MX5-MTY0NTAwNTkwOTc3MX5YYWttTmFBaHRSRkFUZHlMUm5TNkx4RTh-UH4"
-    }
-  ]
+  "rooms": {}
 }

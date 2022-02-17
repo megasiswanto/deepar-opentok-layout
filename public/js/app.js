@@ -1,51 +1,32 @@
-var layoutContainer = document.getElementById("layoutContainer");
-var options = {
-    maxRatio: 3/2,             // The narrowest ratio that will be used (default 2x3)
-    minRatio: 9/16,            // The widest ratio that will be used (default 16x9)
-    fixedRatio: false,         // If this is true then the aspect ratio of the video is maintained and minRatio and maxRatio are ignored (default false)
-    scaleLastRow: true,        // If there are less elements on the last row then we can scale them up to take up more space
-    alignItems: 'center',      // Can be 'start', 'center' or 'end'. Determines where to place items when on a row or column that is not full
-    bigClass: "OT_big",        // The class to add to elements that should be sized bigger
-    bigPercentage: 0.8,        // The maximum percentage of space the big ones should take up
-    minBigPercentage: 0,       // If this is set then it will scale down the big space if there is left over whitespace down to this minimum size
-    bigFixedRatio: false,      // fixedRatio for the big ones
-    bigScaleLastRow: true,     // scale last row for the big elements
-    bigAlignItems: 'center',   // How to align the big items
-    smallAlignItems: 'center', // How to align the small row or column of items if there is a big one
-    maxWidth: Infinity,        // The maximum width of the elements
-    maxHeight: Infinity,       // The maximum height of the elements
-    smallMaxWidth: Infinity,   // The maximum width of the small elements
-    smallMaxHeight: Infinity,  // The maximum height of the small elements
-    bigMaxWidth: Infinity,     // The maximum width of the big elements
-    bigMaxHeight: Infinity,    // The maximum height of the big elements
-    bigMaxRatio: 3/2,          // The narrowest ratio to use for the big elements (default 2x3)
-    bigMinRatio: 9/16,         // The widest ratio to use for the big elements (default 16x9)
-    bigFirst: true,            // Whether to place the big one in the top left (true) or bottom right (false).
-                               // You can also pass 'column' or 'row' to change whether big is first when you are in a row (bottom) or a column (right) layout
-    animate: true,             // Whether you want to animate the transitions using jQuery (not recommended, use CSS transitions instead)
-    window: window,            // Lets you pass in your own window object which should be the same window that the element is in
-    ignoreClass: 'OT_ignore',  // Elements with this class will be ignored and not positioned. This lets you do things like picture-in-picture
-    onLayout: null,            // A function that gets called every time an element is moved or resized, (element, { left, top, width, height }) => {}
-};
+// Essential variables
+var apiKey, sessionId, token, deepArLicenseKey, roomLink;
+var publisher;
+var videoOn = "ON";
+var audioOn = "ON";
 
-// Initialize the layout container and get a reference to the layout method
-var layout = initLayoutContainer(layoutContainer, options);
-layout.layout();
+const queryParams = new Proxy(new URLSearchParams(window.location.search), {
+  get: (searchParams, prop) => searchParams.get(prop),
+});
+var {
+  uid,
+  ref: jwtToken
+} = queryParams;
 
-// replace these values with those generated in your TokBox Account
-var apiKey, sessionId, token, deepArLicenseKey;
-
-// create canvas on which DeepAR will render
+// Create canvas on which DeepAR will render
 var deepARCanvas = document.createElement('canvas');
-
-// Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1572422
-// canvas.captureStream causes an error if getContext not called before. Chrome does not need the line below.
 var canvasContext = deepARCanvas.getContext('webgl');
 var mediaStream = deepARCanvas.captureStream(25);
 var videoTracks = mediaStream.getVideoTracks();
 var deepAR;
 
-axios.post("/init", {})
+// Initialize the layout container and get a reference to the layout method
+var layoutContainer = document.getElementById("layoutContainer");
+var layout = initLayoutContainer(layoutContainer);
+layout.layout();
+
+// --------------------
+
+axios.post("/init", { uid, jwtToken })
 .then(result => {
   console.log("/init | ", result);
   if (result.status === 200) {
@@ -53,17 +34,57 @@ axios.post("/init", {})
     sessionId = result.data ? result.data.sessionId : "";
     token = result.data ? result.data.token : "";
     deepArLicenseKey = result.data ? result.data.deepArLicenseKey : "";
+    roomLink = result.data ? result.data.roomLink : "";
 
     // start DeepAR
-    startDeepAR(deepARCanvas);
+    startDeepAR(deepARCanvas, deepArLicenseKey);
 
     // start video call
     initializeSession(videoTracks[0]);
+  } else {
+    handleError(result);
   }
 })
-.catch(error => {
-  console.log(error);
-});
+.catch(handleError);
+
+// --------------------
+
+var changePublishAudioButton = document.getElementById('change-publish-audio');
+changePublishAudioButton.onclick = function() {
+  let prevAudioOn = audioOn;
+  audioOn = audioOn === "ON" ? "OFF" : "ON";
+  publisher.publishAudio(audioOn === "ON" ? true : false);
+
+  var element1 = document.getElementById(`audio-${audioOn.toLowerCase()}`);
+  element1.classList.remove("hide");
+  var element2 = document.getElementById(`audio-${prevAudioOn.toLowerCase()}`);
+  element2.classList.add("hide");
+}
+
+var changePublishVideoButton = document.getElementById('change-publish-video');
+changePublishVideoButton.onclick = function() {
+  let prevVideoOn = videoOn;
+  videoOn = videoOn === "ON" ? "OFF" : "ON";
+  publisher.publishVideo(videoOn === "ON" ? true : false);
+
+  var element1 = document.getElementById(`video-${videoOn.toLowerCase()}`);
+  element1.classList.remove("hide");
+  var element2 = document.getElementById(`video-${prevVideoOn.toLowerCase()}`);
+  element2.classList.add("hide");
+}
+
+var shareRoomButton = document.getElementById('share-room-button');
+shareRoomButton.onclick = function() {
+  navigator.clipboard.writeText(roomLink);
+
+  var element = document.getElementById(`notification`);
+  element.classList.remove("hide");
+  setTimeout(() => {
+    element.classList.add("hide");
+  }, 5000);
+}
+
+// --------------------
 
 // Handling all of our errors here by alerting them
 function handleError(error) {
@@ -73,21 +94,25 @@ function handleError(error) {
   }
 }
 
+// Initialize OpenTok session, publish video/audio
 function initializeSession(videoSource) {
   console.log("initializeSession");
   var session = OT.initSession(apiKey, sessionId);
 
-  // Create a publisher
-  var publisher = OT.initPublisher('publisherContainer', {
+  publisher = OT.initPublisher('publisherContainer', {
     insertMode: 'append',
     width: '100%',
     height: '100%',
-    videoSource: videoSource
+    videoSource: videoSource,
+    style: {
+      buttonDisplayMode: 'off'
+    }
   }, handleError);
 
-  // Connect to the session
+  publisher.publishVideo(videoOn);
+  publisher.publishAudio(audioOn);
+
   session.connect(token, function(error) {
-    // If the connection is successful, publish to the session
     if (error) {
       console.log("SESSION CONNECT ERROR", error)
       handleError(error);
@@ -123,24 +148,22 @@ function initializeSession(videoSource) {
 
 }
 
-function startDeepAR(canvas) {
+// Start DeepAR
+function startDeepAR(canvas, deepArLicenseKey) {
   console.log("startDeepAR");
 
   deepAR = DeepAR({
     canvasWidth: 640,
     canvasHeight: 480,
-    licenseKey: '14a7e1e989291223d722387e33d497a89d5076a85d94bd87473c9efa52bf8fbbfd2b61d0df7b62d5',
+    licenseKey: deepArLicenseKey,
     libPath: './../deepar',
     segmentationInfoZip: 'segmentation.zip',
     canvas: canvas,
     numberOfFaces: 1,
     onInitialize: function() {
-      // start video immediately after the initalization, mirror = true
-      deepAR.startVideo(true);
+      deepAR.startVideo(true); // start video immediately after the initalization, mirror = true
 
-      deepAR.switchEffect(0, 'slot', './effects/aviators', function() {
-        // effect loaded
-      });
+      deepAR.switchEffect(0, 'slot', './effects/aviators', function() { });
     }
   });
 

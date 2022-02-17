@@ -13,7 +13,26 @@
     <div id="publisherContainer"></div>
   </div>
 
-  <button id="change-filter-button">Change filter</button>
+  <div id="controls">
+    <button id="change-publish-audio">
+      <img id="audio-on" src="icons/mic_on.svg">
+      <img id="audio-off" src="icons/mic_off.svg" class="hide">
+    </button>
+    <button id="change-publish-video">
+      <img id="video-on" src="icons/videocam_on.svg">
+      <img id="video-off" src="icons/videocam_off.svg" class="hide">
+    </button>
+    <button id="change-filter-button">
+      <img src="icons/change_filter.svg">
+    </button>
+    <button id="share-room-button">
+      <img src="icons/link.svg">
+    </button>
+  </div>
+
+  <div id="notification" class="hide">
+    <span>Link to join copied to clipboard.</span>
+  </div>
 
   <script type="text/javascript" src="js/app.js"></script>
 </body>

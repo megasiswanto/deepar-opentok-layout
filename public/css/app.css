@@ -9,14 +9,34 @@ body {
   position: relative;
 }
 
-#change-filter-button {
+#controls {
   position: absolute;
-  bottom: 10px;
-  left: 40%;
-  width: 20%;
+  bottom: 15px;
+  left: 30%;
+  width: 40%;
   height: fit-content;
   z-index: 110;
-  font-size: 1.4em;
+  text-align: center;
+}
+
+#notification {
+  position: absolute;
+  bottom: 60px;
+  font-size: 1em;
+  left: 35%;
+  width: 30%;
+  height: fit-content;
+  z-index: 110;
+  text-align: center;
+  background-color: #b2e19f;
+  padding: 4px 10px;
+  color: #000;
+  font-family: sans-serif;
+  border-radius: 5px;
+}
+
+.hide {
+  display: none;
 }
 
 #layoutContainer > * {
