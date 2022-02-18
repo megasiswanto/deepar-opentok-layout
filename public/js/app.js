@@ -1,9 +1,12 @@
 // Essential variables
 var apiKey, sessionId, token, deepArLicenseKey, roomLink;
 var publisher;
+var myVideoDevices;
 var videoOn = "ON";
 var audioOn = "ON";
+var changePublishAudioButton, changePublishVideoButton, changeFilterButton, shareRoomButton, videoSelector, cycleVideoButton;
 
+// Get room ID or JWT token from url query params
 const queryParams = new Proxy(new URLSearchParams(window.location.search), {
   get: (searchParams, prop) => searchParams.get(prop),
 });
@@ -11,6 +14,29 @@ var {
   uid,
   ref: jwtToken
 } = queryParams;
+
+// Get all connected devices
+function getConnectedDevices() {
+  OT.getDevices((err, allDevices) => {
+    if (err) {
+      alert('getDevices error ' + err.message);
+      return;
+    }
+
+    let index = 0;
+    videoSelector.innerHTML = allDevices.reduce((innerHTML, device) => {
+      if (device.kind === "videoInput") {
+        index += 1;
+        return `${innerHTML}<option value="${device.deviceId}">${device.label || device.kind + index}</option>`;
+      }
+      return innerHTML;
+    }, '');
+  });
+}
+navigator.mediaDevices.addEventListener('devicechange', event => {
+  getConnectedDevices();
+});
+getConnectedDevices();
 
 // Create canvas on which DeepAR will render
 var deepARCanvas = document.createElement('canvas');
@@ -28,7 +54,7 @@ layout.layout();
 
 axios.post("/init", { uid, jwtToken })
 .then(result => {
-  console.log("/init | ", result);
+  // console.log("/init | ", result);
   if (result.status === 200) {
     apiKey = result.data ? result.data.apiKey : "";
     sessionId = result.data ? result.data.sessionId : "";
@@ -49,7 +75,7 @@ axios.post("/init", { uid, jwtToken })
 
 // --------------------
 
-var changePublishAudioButton = document.getElementById('change-publish-audio');
+changePublishAudioButton = document.getElementById('change-publish-audio');
 changePublishAudioButton.onclick = function() {
   let prevAudioOn = audioOn;
   audioOn = audioOn === "ON" ? "OFF" : "ON";
@@ -61,7 +87,7 @@ changePublishAudioButton.onclick = function() {
   element2.classList.add("hide");
 }
 
-var changePublishVideoButton = document.getElementById('change-publish-video');
+changePublishVideoButton = document.getElementById('change-publish-video');
 changePublishVideoButton.onclick = function() {
   let prevVideoOn = videoOn;
   videoOn = videoOn === "ON" ? "OFF" : "ON";
@@ -71,17 +97,41 @@ changePublishVideoButton.onclick = function() {
   element1.classList.remove("hide");
   var element2 = document.getElementById(`video-${prevVideoOn.toLowerCase()}`);
   element2.classList.add("hide");
+
+  if (videoOn === "ON") {
+    cycleVideoButton.disabled = false;
+    changeFilterButton.disabled = false;
+    deepAR.resume();
+    deepAR.startVideo(true, { "deviceId": videoSelector.value });
+  } else {
+    cycleVideoButton.disabled = true;
+    changeFilterButton.disabled = true;
+    deepAR.pause();
+    deepAR.stopVideo();
+  }
 }
 
-var shareRoomButton = document.getElementById('share-room-button');
+changeFilterButton = document.getElementById('change-filter-button');
+
+shareRoomButton = document.getElementById('share-room-button');
 shareRoomButton.onclick = function() {
   navigator.clipboard.writeText(roomLink);
 
-  var element = document.getElementById(`notification`);
+  var element = document.getElementById('notification');
   element.classList.remove("hide");
   setTimeout(() => {
     element.classList.add("hide");
   }, 5000);
+}
+
+videoSelector = document.getElementById('video-source-select');
+
+cycleVideoButton = document.getElementById('cycle-video-button');
+cycleVideoButton.onclick = function() {
+  deepAR.pause()
+  deepAR.stopVideo();
+  deepAR.resume();
+  deepAR.startVideo(true, { "deviceId": videoSelector.value });
 }
 
 // --------------------
@@ -145,7 +195,6 @@ function initializeSession(videoSource) {
       }, 200);
     });
   });
-
 }
 
 // Start DeepAR
@@ -161,9 +210,11 @@ function startDeepAR(canvas, deepArLicenseKey) {
     canvas: canvas,
     numberOfFaces: 1,
     onInitialize: function() {
-      deepAR.startVideo(true); // start video immediately after the initalization, mirror = true
-
+      deepAR.startVideo(true);
       deepAR.switchEffect(0, 'slot', './effects/aviators', function() { });
+    },
+    onError: (errorType, message) => {
+      handleError(`DEEPAR ERROR: message`);
     }
   });
 
@@ -171,7 +222,7 @@ function startDeepAR(canvas, deepArLicenseKey) {
 
   var filterIndex = 0;
   var filters = ['./effects/aviators','./effects/dalmatian','./effects/background_segmentation','./effects/background_blur','./effects/beauty'];
-  var changeFilterButton = document.getElementById('change-filter-button');
+
   changeFilterButton.onclick = function() {
     filterIndex = (filterIndex + 1) % filters.length;
     deepAR.switchEffect(0, 'slot', filters[filterIndex]);
@@ -187,11 +238,11 @@ function startDeepAR(canvas, deepArLicenseKey) {
     // pause and resume are not required, but it will pause the calls to 'window.requestAnimationFrame'
     // and the entire rendering loop, which should improve general performance and battery life
     if (!visible) {
-      deepAR.pause()
+      deepAR.pause();
       deepAR.stopVideo();
     } else {
       deepAR.resume();
-      deepAR.startVideo(true)
+      deepAR.startVideo(true, { "deviceId": videoSelector.value })
     }
   })
 }
