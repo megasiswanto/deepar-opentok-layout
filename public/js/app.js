@@ -1,7 +1,6 @@
 // Essential variables
 var apiKey, sessionId, token, deepArLicenseKey, roomLink;
 var publisher;
-var myVideoDevices;
 var videoOn = "ON";
 var audioOn = "ON";
 var changePublishAudioButton, changePublishVideoButton, changeFilterButton, shareRoomButton, videoSelector, cycleVideoButton;
@@ -22,6 +21,7 @@ function getConnectedDevices() {
       alert('getDevices error ' + err.message);
       return;
     }
+    console.log("allDevices", allDevices);
 
     let index = 0;
     videoSelector.innerHTML = allDevices.reduce((innerHTML, device) => {
@@ -140,7 +140,7 @@ cycleVideoButton.onclick = function() {
 function handleError(error) {
   console.log('handle error', error);
   if (error) {
-    alert(error.message);
+    alert(error.message ? error.message : error);
   }
 }
 
@@ -149,6 +149,10 @@ function initializeSession(videoSource) {
   console.log("initializeSession");
   var session = OT.initSession(apiKey, sessionId);
 
+  OT.getUserMedia({}).then((data) => {
+    getConnectedDevices();
+  })
+
   publisher = OT.initPublisher('publisherContainer', {
     insertMode: 'append',
     width: '100%',
@@ -156,11 +160,10 @@ function initializeSession(videoSource) {
     videoSource: videoSource,
     style: {
       buttonDisplayMode: 'off'
-    }
+    },
+    publishAudio: audioOn,
+    publishVideo: videoOn
   }, handleError);
-
-  publisher.publishVideo(videoOn);
-  publisher.publishAudio(audioOn);
 
   session.connect(token, function(error) {
     if (error) {
