@@ -129,7 +129,7 @@ async function findRoom(roomId, role) {
 }
 
 function generateSession(callback) {
-  opentok.createSession((err, session) => {
+  opentok.createSession({ mediaMode: "routed" }, (err, session) => {
     if (err) {
       console.error(err);
       return callback(err);
