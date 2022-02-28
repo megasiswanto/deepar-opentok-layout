@@ -6,16 +6,15 @@
   "scripts": {
     "start": "node server.js"
   },
-  "type": "module",
   "keywords": [],
   "author": "mega.siswanto@vonage.com",
   "license": "ISC",
   "dependencies": {
+    "atob": "^2.1.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
-    "lowdb": "^3.0.0",
     "morgan": "^1.10.0",
     "opentok": "^2.13.0",
     "path": "^0.12.7"

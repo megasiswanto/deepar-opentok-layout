@@ -1,40 +1,37 @@
-import dotenv from 'dotenv'
-dotenv.config();
+require("dotenv").config();
 
 const PROJECT_API_KEY = process.env.PROJECT_API_KEY;
 const PROJECT_API_SECRET = process.env.PROJECT_API_SECRET;
 const DEEPAR_LICENSE_KEY = process.env.DEEPAR_LICENSE_KEY;
 
-import express from 'express'
-import cors from 'cors'
-import { join, dirname } from 'path'
-import logger from 'morgan'
-
-import { fileURLToPath } from 'url'
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
+var express = require('express');
+var cors = require('cors');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 var app = express();
 
 app.use(logger('dev'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(join(__dirname, 'public')));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 app.listen(process.env.PORT);
 
 // ------------------------------------------------------------------------
 
-import Util from 'util'
-
-import { Low, JSONFile } from 'lowdb'
-const adapter = new JSONFile(join(__dirname, 'db.json'));
-const db = new Low(adapter);
-
-import OpenTok from 'opentok'
+const atob = require('atob');
+const Util = require('util');
+const OpenTok = require("opentok");
 const opentok = new OpenTok(PROJECT_API_KEY, PROJECT_API_SECRET);
 
+let db = {
+  "rooms": []
+};
+
 app.get('/', (req, res, next) => {
-  res.sendFile(join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post('/init', async (req, res, next) => {
@@ -109,23 +106,20 @@ async function parseJwt(token) {
 };
 
 async function findRoom(roomId, role) {
-  await db.read();
-
-  if (!db.data.rooms.hasOwnProperty(roomId)){
+  if (!db.rooms.hasOwnProperty(roomId)){
     if (role === "participant") {
       return { code: 404, message: "Room doesn't exist" };
     }
 
     let ts = new Date();
     let hours = 24;
-    db.data.rooms[roomId] = {
+    db.rooms[roomId] = {
       sessionId: "",
       createdAt: ts.toISOString()
     };
-    await db.write();
   }
 
-  return db.data.rooms[roomId];
+  return db.rooms[roomId];
 }
 
 function generateSession(callback) {
@@ -141,11 +135,9 @@ function generateSession(callback) {
 }
 
 async function saveSessionId(roomId, sessionId) {
-  await db.read();
-  db.data.rooms[roomId].sessionId = sessionId;
-  await db.write();
+  db.rooms[roomId].sessionId = sessionId;
 
-  return db.data.rooms[roomId];
+  return db.rooms[roomId];
 }
 
 async function generateToken(sessionId) {
