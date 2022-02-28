@@ -5,7 +5,9 @@
   <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
   <script src="lib/opentok-layout.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script type="text/javascript" src="./deepar/deepar.js"></script>
+  <script rel="preload" as="script" type="text/javascript" src="./deepar/deepar.js"></script>
+  <link rel="preload" as="fetch" crossorigin="anonymous" href="./deepar/models-68-extreme.bin" />
+  <link rel="preload" as="fetch" crossorigin="anonymous" href="./deepar/deepar.wasm" />
 </head>
 
 <body>
@@ -42,6 +44,6 @@
     <span>Link to join copied to clipboard.</span>
   </div>
 
-  <script type="text/javascript" src="js/app.js"></script>
+  <script rel="preload" type="text/javascript" src="js/app.js"></script>
 </body>
 </html>
