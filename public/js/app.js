@@ -208,7 +208,7 @@ function startDeepAR(canvas, deepArLicenseKey) {
     canvasWidth: 640,
     canvasHeight: 480,
     licenseKey: deepArLicenseKey,
-    libPath: './../deepar',
+    libPath: 'ot-deepar/deepar',
     segmentationInfoZip: 'segmentation.zip',
     canvas: canvas,
     numberOfFaces: 1,
