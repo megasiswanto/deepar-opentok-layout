@@ -52,7 +52,7 @@ layout.layout();
 
 // --------------------
 
-axios.post("/ot-deepar/init", { uid, jwtToken })
+axios.post("/init", { uid, jwtToken })
 .then(result => {
   // console.log("/init | ", result);
   if (result.status === 200) {
@@ -208,7 +208,7 @@ function startDeepAR(canvas, deepArLicenseKey) {
     canvasWidth: 640,
     canvasHeight: 480,
     licenseKey: deepArLicenseKey,
-    libPath: 'ot-deepar/deepar',
+    libPath: '/ot-deepar/deepar',
     segmentationInfoZip: 'segmentation.zip',
     canvas: canvas,
     numberOfFaces: 1,

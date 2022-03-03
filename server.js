@@ -26,6 +26,7 @@ const Util = require('util');
 const OpenTok = require("opentok");
 const opentok = new OpenTok(PROJECT_API_KEY, PROJECT_API_SECRET);
 
+const APP_BASE_URL = "https://vids.vonage.com/ot-deepar";
 let db = {
   "rooms": []
 };
@@ -60,7 +61,8 @@ app.post('/init', async (req, res, next) => {
     } else {
       roomId = uid;
     }
-    let roomLink = `https://${req.get('host')}?uid=${roomId}`;
+    // let roomLink = `https://${req.get('host')}?uid=${roomId}`;
+    let roomLink = `${APP_BASE_URL}?uid=${roomId}`;
 
     let result = await findRoom(roomId, role);
     if (result.code) {
