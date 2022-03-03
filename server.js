@@ -35,7 +35,7 @@ app.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/init', async (req, res, next) => {
+app.post('/ot-deepar/init', async (req, res, next) => {
   try {
     let { uid, jwtToken } = req.body;
 
