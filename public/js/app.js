@@ -52,7 +52,7 @@ layout.layout();
 
 // --------------------
 
-axios.post("/init", { uid, jwtToken })
+axios.post("/ot-deepar/init", { uid, jwtToken })
 .then(result => {
   // console.log("/init | ", result);
   if (result.status === 200) {
